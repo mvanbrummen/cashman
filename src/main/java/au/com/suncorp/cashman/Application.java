@@ -1,6 +1,7 @@
 package au.com.suncorp.cashman;
 
-import au.com.suncorp.cashman.enumeration.Denomination;
+import au.com.suncorp.cashman.enumeration.Note;
+import au.com.suncorp.cashman.exception.CurrencyCombinationException;
 import au.com.suncorp.cashman.helper.CommandInterpreter;
 
 import java.util.Scanner;
@@ -14,14 +15,18 @@ public class Application {
         CommandInterpreter commandInterpreter = new CommandInterpreter(controller);
 
         int count;
-        for (Denomination denomination : Denomination.values()) {
+        for (Note denomination : Note.values()) {
             System.out.printf("> Enter the number of %s: ", denomination.name());
             count = input.nextInt();
             controller.add(denomination, count);
         }
         while (commandInterpreter.isReadyToParseCommand()) {
             System.out.print(PROMPT);
-            commandInterpreter.parseCommand(input.next());
+            try {
+                commandInterpreter.parseCommand(input.next());
+            } catch (Exception e) {
+                commandInterpreter.printUsage();
+            }
         }
     }
 }
