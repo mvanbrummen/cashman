@@ -1,0 +1,22 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'jacoco'
+apply plugin: 'application'
+apply plugin: 'checkstyle'
+
+mainClassName = "au.com.suncorp.cashman.Cashman3000"
+
+repositories {
+    jcenter()
+}
+
+checkstyle {
+    configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+    toolVersion = '6.1.1'
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.21'
+
+    testCompile 'junit:junit:4.12'
+}
