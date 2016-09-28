@@ -1,9 +1,9 @@
 package au.com.suncorp.cashman.controller;
 
 import au.com.suncorp.cashman.enumeration.Note;
+import au.com.suncorp.cashman.exceptions.CurrencyCombinationException;
 import au.com.suncorp.cashman.exceptions.InsufficientFundsException;
 import au.com.suncorp.cashman.interfaces.Money;
-import au.com.suncorp.cashman.exceptions.CurrencyCombinationException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -50,13 +50,15 @@ public class FundsController {
             CurrencyCombinationException {
         Map<Money, Integer> toWithdraw = null;
         List<Money> denominations = new ArrayList<>(count.keySet());
+
+        // reverse sort denominations
         denominations.sort(Comparator.comparing(Money::getValue).reversed());
+
+        // greedy algorithm to find denominations to make amount - try biggest notes first
         for (int i = 0; i < denominations.size(); i++) {
             toWithdraw = calculateDenominations(i, denominations, amount);
-            if (getTotal(toWithdraw) == amount) {
-                if (fundsAvailable(toWithdraw)) {
-                    break;
-                }
+            if (fundsAvailable(toWithdraw)) {
+                break;
             }
         }
         if (!fundsAvailable(toWithdraw))
@@ -68,12 +70,21 @@ public class FundsController {
 
     private Map<Money, Integer> calculateDenominations(int position, List<Money> denominations, int amount) {
         Map<Money, Integer> toWithdraw = new HashMap<>();
-        for (int i = position; i < denominations.size(); i++) {
-            int value = denominations.get(i).getValue().intValue();
-            if (value <= amount) {
-                int count = amount / value;
-                toWithdraw.put(denominations.get(i), count);
-                amount -= count * value;
+        for (int variation = 0; variation < getTotalCount(); variation++) {
+            toWithdraw.clear();
+            int amountTmp = amount;
+            int variationTmp = variation;
+            for (int i = position; i < denominations.size(); i++) {
+                int value = denominations.get(i).getValue().intValue();
+                if (value <= amountTmp) {
+                    int count = (amountTmp / value) - variationTmp;
+                    toWithdraw.put(denominations.get(i), count);
+                    amountTmp -= count * value;
+                    variationTmp = 0;
+                    if (getTotal(toWithdraw) == amount) {
+                        return toWithdraw;
+                    }
+                }
             }
         }
         return toWithdraw;
@@ -98,6 +109,14 @@ public class FundsController {
 
     public int getCount(Money denomination) {
         return count.containsKey(denomination) ? count.get(denomination) : 0;
+    }
+
+    public int getTotalCount() {
+        int sum = 0;
+        for (Map.Entry<Money, Integer> entry : count.entrySet()) {
+            sum += getCount(entry.getKey());
+        }
+        return sum;
     }
 
     public void report(Money denomination) {

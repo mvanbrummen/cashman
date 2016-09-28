@@ -1,6 +1,7 @@
 package au.com.suncorp.cashman.controller;
 
 import au.com.suncorp.cashman.enumeration.Note;
+import au.com.suncorp.cashman.exceptions.CurrencyCombinationException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -97,6 +98,13 @@ public class FundsControllerTest {
         fundsController.withdraw(new BigDecimal(200));
         Assert.assertEquals(0, fundsController.getCount(Note.TWENTY));
         Assert.assertEquals(0, fundsController.getCount(Note.FIFTY));
+    }
+
+    @Test(expected = CurrencyCombinationException.class)
+    public void whenCantMakeAmountThenCurrencyComboException() throws Exception {
+        fundsController.add(Note.FIFTY, 10);
+        fundsController.add(Note.TWENTY, 10);
+        fundsController.withdraw(new BigDecimal(30));
     }
 
 }
