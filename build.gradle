@@ -4,7 +4,7 @@ apply plugin: 'jacoco'
 apply plugin: 'application'
 apply plugin: 'checkstyle'
 
-mainClassName = "au.com.suncorp.cashman.Cashman3000"
+mainClassName = "au.com.suncorp.cashman.Application"
 
 repositories {
     jcenter()
@@ -13,6 +13,12 @@ repositories {
 checkstyle {
     configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
     toolVersion = '6.1.1'
+}
+
+run {
+    // attach standard in as input
+    // looks terrible though for CLI so defer to ./runProject
+    standardInput = System.in
 }
 
 dependencies {
