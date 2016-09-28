@@ -1,4 +1,4 @@
-package au.com.suncorp.cashman.exception;
+package au.com.suncorp.cashman.exceptions;
 
 public class CurrencyCombinationException extends Exception {
 

@@ -14,7 +14,7 @@ public class CommandInterpreterTest {
     }
 
     @Test
-    public void whenQuitThenReadyToParseCommandFalse() {
+    public void whenQuitThenReadyToParseCommandFalse() throws Exception {
         CommandInterpreter commandInterpreter = new CommandInterpreter(new FundsController());
         commandInterpreter.parseCommand("quit");
         Assert.assertFalse(commandInterpreter.isReadyToParseCommand());

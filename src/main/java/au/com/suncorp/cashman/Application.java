@@ -2,6 +2,8 @@ package au.com.suncorp.cashman;
 
 import au.com.suncorp.cashman.controller.FundsController;
 import au.com.suncorp.cashman.enumeration.Note;
+import au.com.suncorp.cashman.exceptions.CurrencyCombinationException;
+import au.com.suncorp.cashman.exceptions.InsufficientFundsException;
 import au.com.suncorp.cashman.helper.CommandInterpreter;
 
 import java.util.Scanner;
@@ -16,15 +18,19 @@ public class Application {
 
         int count;
         for (Note denomination : Note.values()) {
-            System.out.printf("> Enter the number of %s: ", denomination.name());
+            System.out.printf("> Enter the number of %s: ", denomination.toString());
             count = input.nextInt();
             fundsController.add(denomination, count);
         }
         while (commandInterpreter.isReadyToParseCommand()) {
             System.out.print(PROMPT);
             try {
-                commandInterpreter.parseCommand(input.next());
-            } catch (Exception e) {
+                commandInterpreter.parseCommand(input.nextLine());
+            } catch (InsufficientFundsException e) {
+                System.out.println(e.getMessage());
+            } catch (CurrencyCombinationException e) {
+                System.out.println(e.getMessage());
+            } catch (NumberFormatException e) {
                 commandInterpreter.printUsage();
             }
         }

@@ -9,7 +9,7 @@ import static au.com.suncorp.cashman.util.Constants.AUD;
 
 public enum Note implements Money {
     TWENTY(AUD, 20),
-    ONE_HUNDRED(AUD, 100);
+    FIFTY(AUD, 50);
 
     private Currency currency;
     private BigDecimal value;
@@ -25,6 +25,11 @@ public enum Note implements Money {
 
     public Currency getCurrency() {
         return currency;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %.2f", getCurrency().getCurrencyCode(), getValue());
     }
 
 }

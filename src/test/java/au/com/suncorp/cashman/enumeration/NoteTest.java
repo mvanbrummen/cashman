@@ -14,13 +14,13 @@ public class NoteTest {
     public void whenGetCurrencyThenCorrectCurrency() {
         Currency expectedCurrency = Currency.getInstance(AUD);
         Assert.assertEquals(expectedCurrency, Note.TWENTY.getCurrency());
-        Assert.assertEquals(expectedCurrency, Note.ONE_HUNDRED.getCurrency());
+        Assert.assertEquals(expectedCurrency, Note.FIFTY.getCurrency());
     }
 
     @Test
     public void whenGetValueThenCorrectValue() {
         Assert.assertEquals(new BigDecimal(20), Note.TWENTY.getValue());
-        Assert.assertEquals(new BigDecimal(100), Note.ONE_HUNDRED.getValue());
+        Assert.assertEquals(new BigDecimal(50), Note.FIFTY.getValue());
     }
 
 }

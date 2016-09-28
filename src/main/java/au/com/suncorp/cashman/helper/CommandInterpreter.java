@@ -1,6 +1,8 @@
 package au.com.suncorp.cashman.helper;
 
 import au.com.suncorp.cashman.controller.FundsController;
+import au.com.suncorp.cashman.exceptions.CurrencyCombinationException;
+import au.com.suncorp.cashman.exceptions.InsufficientFundsException;
 
 import java.math.BigDecimal;
 
@@ -8,14 +10,15 @@ public class CommandInterpreter {
 
     private FundsController fundsController;
     private boolean isReadyToParseCommand;
-    private final String USAGE = "Usage: withdraw [amount]\nreport\nquit\n";
+    private final String USAGE = "Usage: \n\twithdraw [amount]\n\treport\n\tquit\n";
 
     public CommandInterpreter(FundsController fundsController) {
         this.isReadyToParseCommand = true;
         this.fundsController = fundsController;
     }
 
-    public void parseCommand(String command) {
+    public void parseCommand(String command) throws InsufficientFundsException, CurrencyCombinationException,
+            NumberFormatException {
         if (command.startsWith("withdraw ")) {
             command = command.replace("withdraw ", "");
             BigDecimal amount = new BigDecimal(Integer.parseInt(command));
