@@ -1,6 +1,8 @@
 Cashman
 ===================
 
+[![Build Status](https://travis-ci.org/mvanbrummen/cashman.svg?branch=master)](https://travis-ci.org/mvanbrummen/cashman)
+
 Requirements
 ------------
 
