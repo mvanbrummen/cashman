@@ -8,15 +8,15 @@ import java.util.Currency;
 import static au.com.suncorp.cashman.util.Constants.AUD;
 
 public enum Note implements Money {
-    TWENTY(Currency.getInstance(AUD), new BigDecimal(20)),
-    ONE_HUNDRED(Currency.getInstance(AUD), new BigDecimal(100));
+    TWENTY(AUD, 20),
+    ONE_HUNDRED(AUD, 100);
 
     private Currency currency;
     private BigDecimal value;
 
-    Note(Currency currency, BigDecimal value) {
-        this.currency = currency;
-        this.value = value;
+    Note(String currencyCode, int value) {
+        this.currency = Currency.getInstance(currencyCode);
+        this.value = new BigDecimal(value);
     }
 
     public BigDecimal getValue() {

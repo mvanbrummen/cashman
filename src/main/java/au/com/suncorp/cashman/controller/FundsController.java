@@ -1,4 +1,4 @@
-package au.com.suncorp.cashman;
+package au.com.suncorp.cashman.controller;
 
 import au.com.suncorp.cashman.enumeration.Note;
 import au.com.suncorp.cashman.interfaces.Money;
@@ -7,20 +7,25 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Controller {
+public class FundsController {
 
     private Map<Money, Integer> count;
 
-    public Controller() {
+    public FundsController() {
         this.count = new HashMap<>();
     }
 
-    public Controller(Map<Money, Integer> count) {
+    public FundsController(Map<Money, Integer> count) {
         this.count = count;
     }
 
-    public void add(Money denomination, int count) {
-        this.count.put(denomination, count);
+    public void add(Money denomination, int amount) {
+        if (count.containsKey(denomination)) {
+            Integer total = count.get(denomination) + amount;
+            count.put(denomination, total);
+        } else {
+            count.put(denomination, amount);
+        }
     }
 
     public BigDecimal withdraw(BigDecimal amount) throws IllegalStateException, IllegalArgumentException {
@@ -30,11 +35,13 @@ public class Controller {
         if (amount.intValue() < 0) {
             throw new IllegalArgumentException("Cannot withdraw a negative amount");
         }
-        return new BigDecimal(2); // TODO return money to be withdrawn
+
+
+        return new BigDecimal(2);
     }
 
     public int getCount(Money denomination) {
-        return count.get(denomination);
+        return count.containsKey(denomination) ? count.get(denomination) : 0;
     }
 
     public void report(Money denomination) {
