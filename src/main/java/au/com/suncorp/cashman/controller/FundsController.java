@@ -1,5 +1,6 @@
 package au.com.suncorp.cashman.controller;
 
+import au.com.suncorp.cashman.enumeration.Coin;
 import au.com.suncorp.cashman.enumeration.Note;
 import au.com.suncorp.cashman.exceptions.CurrencyCombinationException;
 import au.com.suncorp.cashman.exceptions.InsufficientFundsException;
@@ -38,15 +39,14 @@ public class FundsController {
         if (!isInitialised()) {
             throw new IllegalStateException("Must be initialised with money before a withdraw can occur");
         }
-        int amount = withdrawAmount.intValue();
-        if (amount < 0) {
+        if (withdrawAmount.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Cannot withdraw a negative amount");
         }
-        Map<Money, Integer> toWithdraw = calculateWithdraw(amount);
+        Map<Money, Integer> toWithdraw = calculateWithdraw(withdrawAmount);
         deduct(toWithdraw);
     }
 
-    private Map<Money, Integer> calculateWithdraw(int amount) throws InsufficientFundsException,
+    private Map<Money, Integer> calculateWithdraw(BigDecimal amount) throws InsufficientFundsException,
             CurrencyCombinationException {
         Map<Money, Integer> toWithdraw = null;
         List<Money> denominations = new ArrayList<>(count.keySet());
@@ -63,25 +63,27 @@ public class FundsController {
         }
         if (!fundsAvailable(toWithdraw))
             throw new InsufficientFundsException("Insufficient funds to make withdrawal");
-        if (getTotal(toWithdraw) != amount)
+        if (getTotal(toWithdraw).compareTo(amount) != 0)
             throw new CurrencyCombinationException("Cannot make amount with available denominations");
         return toWithdraw;
     }
 
-    private Map<Money, Integer> calculateDenominations(int position, List<Money> denominations, int amount) {
+    private Map<Money, Integer> calculateDenominations(int position, List<Money> denominations, BigDecimal amount) {
         Map<Money, Integer> toWithdraw = new HashMap<>();
         for (int variation = 0; variation < getTotalCount(); variation++) {
             toWithdraw.clear();
-            int amountTmp = amount;
+            double amountTmp = amount.doubleValue();
             int variationTmp = variation;
             for (int i = position; i < denominations.size(); i++) {
-                int value = denominations.get(i).getValue().intValue();
+                double value = denominations.get(i).getValue().doubleValue();
                 if (value <= amountTmp) {
-                    int count = (amountTmp / value) - variationTmp;
-                    toWithdraw.put(denominations.get(i), count);
-                    amountTmp -= count * value;
+                    double count = (amountTmp / value) - variationTmp;
+                    int c = (int) Math.floor(count);
+                    toWithdraw.put(denominations.get(i), c);
+                    // holy precision Batman!
+                    amountTmp = BigDecimal.valueOf(amountTmp).subtract(BigDecimal.valueOf(c).multiply(BigDecimal.valueOf(value))).doubleValue();
                     variationTmp = 0;
-                    if (getTotal(toWithdraw) == amount) {
+                    if (getTotal(toWithdraw).compareTo(amount) == 0) {
                         return toWithdraw;
                     }
                 }
@@ -127,17 +129,20 @@ public class FundsController {
         for (Money denomination : Note.values()) {
             report(denomination);
         }
+        for (Money denomination : Coin.values()) {
+            report(denomination);
+        }
     }
 
-    private int getTotal(Map<Money, Integer> count) {
-        int sum = 0;
+    private BigDecimal getTotal(Map<Money, Integer> count) {
+        BigDecimal sum = BigDecimal.ZERO;
         for (Map.Entry<Money, Integer> entry : count.entrySet()) {
-            sum += entry.getKey().getValue().intValue() * entry.getValue().intValue();
+            sum = sum.add(entry.getKey().getValue().multiply(new BigDecimal(entry.getValue().intValue())));
         }
         return sum;
     }
 
-    public int getTotal() {
+    public BigDecimal getTotal() {
         return getTotal(count);
     }
 

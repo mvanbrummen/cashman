@@ -1,5 +1,6 @@
 package au.com.suncorp.cashman.controller;
 
+import au.com.suncorp.cashman.enumeration.Coin;
 import au.com.suncorp.cashman.enumeration.Note;
 import au.com.suncorp.cashman.exceptions.CurrencyCombinationException;
 import org.junit.Assert;
@@ -61,6 +62,38 @@ public class FundsControllerTest {
     public void whenInitialisedThenReturnTrue() {
         fundsController.add(Note.FIFTY, 26);
         Assert.assertTrue(fundsController.isInitialised());
+    }
+
+    @Test
+    public void whenWithdrawCoinsThenWithdrawCorrectAmount() throws Exception {
+        fundsController.add(Coin.FIFTY, 100);
+        fundsController.add(Coin.TWENTY, 100);
+        fundsController.withdraw(BigDecimal.valueOf(0.50));
+        Assert.assertEquals(99, fundsController.getCount(Coin.FIFTY));
+        fundsController.withdraw(BigDecimal.valueOf(0.70));
+        Assert.assertEquals(98, fundsController.getCount(Coin.FIFTY));
+        Assert.assertEquals(99, fundsController.getCount(Coin.TWENTY));
+    }
+
+    @Test
+    public void whenWithdrawOtherCoinsThenWithdrawCorrectAmount() throws Exception {
+        fundsController.add(Coin.FIFTY, 100);
+        fundsController.add(Coin.TWENTY, 100);
+        fundsController.add(Coin.TEN, 100);
+        fundsController.add(Coin.FIVE, 100);
+        fundsController.add(Coin.ONE, 100);
+        fundsController.add(Coin.TWO, 100);
+        fundsController.withdraw(BigDecimal.valueOf(0.05));
+        Assert.assertEquals(99, fundsController.getCount(Coin.FIVE));
+        fundsController.withdraw(BigDecimal.valueOf(0.25));
+        Assert.assertEquals(99, fundsController.getCount(Coin.TWENTY));
+        Assert.assertEquals(98, fundsController.getCount(Coin.FIVE));
+        fundsController.withdraw(BigDecimal.valueOf(2.45));
+        Assert.assertEquals(99, fundsController.getCount(Coin.TWO));
+        Assert.assertEquals(97, fundsController.getCount(Coin.TWENTY));
+        Assert.assertEquals(97, fundsController.getCount(Coin.FIVE));
+        fundsController.withdraw(BigDecimal.valueOf(100));
+        Assert.assertEquals(49, fundsController.getCount(Coin.TWO));
     }
 
     @Test

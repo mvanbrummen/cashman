@@ -1,6 +1,7 @@
 package au.com.suncorp.cashman;
 
 import au.com.suncorp.cashman.controller.FundsController;
+import au.com.suncorp.cashman.enumeration.Coin;
 import au.com.suncorp.cashman.enumeration.Note;
 import au.com.suncorp.cashman.exceptions.CurrencyCombinationException;
 import au.com.suncorp.cashman.exceptions.InsufficientFundsException;
@@ -18,6 +19,11 @@ public class Application {
 
         int count;
         for (Note denomination : Note.values()) {
+            System.out.printf("> Enter the number of %s: ", denomination.toString());
+            count = input.nextInt();
+            fundsController.add(denomination, count);
+        }
+        for (Coin denomination : Coin.values()) {
             System.out.printf("> Enter the number of %s: ", denomination.toString());
             count = input.nextInt();
             fundsController.add(denomination, count);

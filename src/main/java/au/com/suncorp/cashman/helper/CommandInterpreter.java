@@ -21,7 +21,7 @@ public class CommandInterpreter {
             NumberFormatException {
         if (command.startsWith("withdraw ")) {
             command = command.replace("withdraw ", "");
-            BigDecimal amount = new BigDecimal(Integer.parseInt(command));
+            BigDecimal amount = new BigDecimal(Double.parseDouble(command));
             fundsController.withdraw(amount);
         } else {
             switch (command) {
