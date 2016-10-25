@@ -1,7 +1,5 @@
 package au.com.suncorp.cashman.controller;
 
-import au.com.suncorp.cashman.enumeration.Coin;
-import au.com.suncorp.cashman.enumeration.Note;
 import au.com.suncorp.cashman.exceptions.CurrencyCombinationException;
 import au.com.suncorp.cashman.exceptions.InsufficientFundsException;
 import au.com.suncorp.cashman.interfaces.Money;
@@ -126,12 +124,7 @@ public class FundsController {
     }
 
     public void reportAll() {
-        for (Money denomination : Note.values()) {
-            report(denomination);
-        }
-        for (Money denomination : Coin.values()) {
-            report(denomination);
-        }
+        count.keySet().forEach(this::report);
     }
 
     private BigDecimal getTotal(Map<Money, Integer> count) {
