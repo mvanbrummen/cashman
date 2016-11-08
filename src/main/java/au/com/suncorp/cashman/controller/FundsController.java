@@ -5,8 +5,8 @@ import au.com.suncorp.cashman.exceptions.InsufficientFundsException;
 import au.com.suncorp.cashman.interfaces.Money;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,12 +47,7 @@ public class FundsController {
     private Map<Money, Integer> calculateWithdraw(BigDecimal amount) throws InsufficientFundsException,
             CurrencyCombinationException {
         Map<Money, Integer> toWithdraw = null;
-        List<Money> denominations = new ArrayList<>();
-        count.entrySet().forEach(entry -> {
-            if (entry.getValue() > 0) {
-                denominations.add(entry.getKey());
-            }
-        });
+        List<Money> denominations = count.entrySet().stream().filter(entry -> entry.getValue() > 0).map(Map.Entry::getKey).collect(Collectors.toList());
 
         // reverse sort denominations
         denominations.sort(Comparator.comparing(Money::getValue).reversed());
