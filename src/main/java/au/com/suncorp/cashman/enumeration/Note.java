@@ -8,8 +8,11 @@ import java.util.Currency;
 import static au.com.suncorp.cashman.util.Constants.AUD;
 
 public enum Note implements Money {
+    HUNDRED(AUD, 100),
+    FIFTY(AUD, 50),
     TWENTY(AUD, 20),
-    FIFTY(AUD, 50);
+    TEN(AUD, 10),
+    FIVE(AUD, 5);
 
     private Currency currency;
     private BigDecimal value;
