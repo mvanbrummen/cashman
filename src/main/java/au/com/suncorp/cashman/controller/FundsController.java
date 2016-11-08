@@ -47,7 +47,12 @@ public class FundsController {
     private Map<Money, Integer> calculateWithdraw(BigDecimal amount) throws InsufficientFundsException,
             CurrencyCombinationException {
         Map<Money, Integer> toWithdraw = null;
-        List<Money> denominations = new ArrayList<>(count.keySet());
+        List<Money> denominations = new ArrayList<>();
+        count.entrySet().forEach(entry -> {
+            if (entry.getValue() > 0) {
+                denominations.add(entry.getKey());
+            }
+        });
 
         // reverse sort denominations
         denominations.sort(Comparator.comparing(Money::getValue).reversed());
